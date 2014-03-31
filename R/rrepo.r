@@ -45,15 +45,15 @@ more_repos <- function(nextrel) {
 }
 
 #' @export
-get_repo_data <- function(url) {
+get_repo_data <- function(url, auth) {
   # url: "https://api.github.com/orgs/{org_name}/repos?page=1&per_page=100"
   print("fetching repo info")
-  resp <- doget(url)
+  resp <- doget(url, auth)
   dfs <- list(fromJSON(resp[['data']]))
   nextrel <- get_next_rel(resp)
   i <- 2
   while (more_repos(nextrel)) {
-    resp <- doget(nextrel)
+    resp <- doget(nextrel, auth)
     dfs[[i]] <- fromJSON(resp[['data']])
     nextrel <- get_next_rel(resp)
     i <- i + 1
@@ -62,7 +62,9 @@ get_repo_data <- function(url) {
     Map(function(x) {
         tbl_df(x) %.%
           select(name, description, created_at, updated_at,
-            pushed_at, size, language, forks_count, url) },
+            pushed_at, size, language, forks_count,
+            url, ssh_url, clone_url)
+        },
         dfs)))
 }
 
@@ -84,7 +86,7 @@ repolist <- function(df, exclude = "") {
 }
 
 #' @export
-parse_commits <- function(df) {
+parse_commits_api <- function(df) {
   tbl_df(
     data.frame(
       sha = df[['sha']],
@@ -102,18 +104,18 @@ write_out <- function(data, url) {
 }
 
 #' @export
-get_commit_data <- function(url, write = FALSE) {
+get_commit_data_from_api <- function(url, write = FALSE) {
   print("fetching commits...")
   print(url)
   print(1)
   resp <- doget(url)
-  commits <- list(parse_commits(fromJSON(resp[['data']])))
+  commits <- list(parse_commits_api(fromJSON(resp[['data']])))
   nextrel <- get_next_rel(resp)
   i <- 2
   while (str_detect(nextrel, "last_sha")) {
     print(i)
     resp <- doget(nextrel)
-    commits[[i]] <- parse_commits(fromJSON(resp[['data']]))
+    commits[[i]] <- parse_commits_api(fromJSON(resp[['data']]))
     nextrel <- get_next_rel(resp)
     i <- i + 1
   }
@@ -125,9 +127,68 @@ get_commit_data <- function(url, write = FALSE) {
 }
 
 #' @export
-get_all_commit_data <- function(repo_list) {
-  data <- Map(get_commit_data, repo_list, TRUE)
-  tbl_df(rbind_all(data))
+clone_repos <- function(repo_data) {
+  info <- repo_data %.%
+    select(name, clone_url) %.%
+    mutate(clone_statement = paste('git clone', clone_url))
+  Map(function(name, statement) {
+      already_cloned <- name %in% dir()
+      if (already_cloned) {
+        print("not cloning, already exists")
+      } else {
+        system(statement)
+      }
+    },
+    info[['name']],
+    info[['clone_statement']])
+}
+
+#' @export
+extract_git_log <- function() {
+  # assumes already in repo dir
+  # does this for current repo
+  git_log <- paste("git log --no-merges --shortstat",
+    "--pretty=format:'%H;%an;%ae;%ai;%f^'",
+    "| sed -e :begin -e '$!N;s/\\^\\n/\\; /; tbegin'",
+    "| grep -v Merge")
+  glog <- system(git_log, intern = TRUE)
+  glog <- glog[str_detect(glog, ";")]
+  gcl <- strsplit(glog, ";")
+  rbind_all(
+    Map(function(x, y) {
+      data.frame(t(gcl[[y]]),
+        stringsAsFactors = FALSE)
+      },
+    gcl,
+    seq_along(gcl)))
+}
+
+# TODO check
+#' @export
+get_commit_data_from_local <- function(repo_data) {
+  clone_repos(repo_data)
+  repo_list <- repolist(repo_data)
+  Map(function(x) {
+    setwd(x);
+    extract_git_log();
+    setwd("..") # figure out
+    },
+    repo_list)
+}
+
+# TODO: check that this works
+#' @export
+get_all_commit_data <- function(repo_data, api = TRUE) {
+  if (api) {
+    repo_list <- repolist(repo_data)
+    data <- Map(get_commit_data_from_api, repo_list, TRUE)
+    tbl_df(rbind_all(data))
+  } else {
+    data <- get_commit_data_from_local(repo_data)
+    # set names
+    tbl_df(rbind_all(data))
+    }
+
 }
 
 #' @export
@@ -156,41 +217,4 @@ combine_from_csv <- function() {
   tbl_df(rbind_all(dfs))
 }
 
-#' @export
-over_time <- function(df) {
-  df %.%
-    group_by(name, email, date = floor_date(as.Date(date), "week")) %.%
-    summarise(commits = n())
-}
 
-#' @export
-commits_per_week <- function(df) {
-  df %.%
-    mutate(weekdate = floor_date(as.Date(date), "week")) %.%
-    group_by(weekdate) %.%
-    summarise(commits = n())
-}
-
-#' @export
-projects <- function(df) {
-  projects <- df %.%
-    group_by(name, date = floor_date(as.Date(date), "week")) %.%
-    summarise(commits = n())
-  projects %.%
-    mutate(max_commits = max(commits)) %.%
-    mutate(percentage = round(ceiling(commits/max_commits*10)))
-}
-
-#' @export
-project_heatmap <- function(df) {
-  colours <- c( "#a50026", "#d73027", "#f46d43", "#fdae61",
-    "#fee090", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695", "#313695")
-  labels <- as.character(10 * 1:10)
-  ggplot(df, aes(
-    date, name, fill = as.factor(ceiling(percentage)))) +
-      geom_raster() +
-      scale_fill_manual(
-        values = colours,
-        labels = labels,
-        name = "percentage")
-}
