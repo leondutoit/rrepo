@@ -1,5 +1,12 @@
 
 #' @export
+repo_language <- function(df) {
+  df %.%
+    group_by(language) %.%
+    summarise(size = sum(size))
+}
+
+#' @export
 over_time <- function(df) {
   df %.%
     group_by(name, email, date = floor_date(as.Date(date), "week")) %.%

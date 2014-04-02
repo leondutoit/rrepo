@@ -69,15 +69,7 @@ get_repo_data <- function(url, auth) {
 }
 
 #' @export
-repo_language <- function(df) {
-  df %.%
-    group_by(language) %.%
-    summarise(size = sum(size))
-}
-
-#' @export
 repolist <- function(df, exclude = "") {
-  # exclude c("dontcounthitsrepo", "orthisone")
   df %.%
     filter(!description %in% exclude) %.%
     select(url) %.%
@@ -163,32 +155,36 @@ extract_git_log <- function() {
     seq_along(gcl)))
 }
 
-# TODO check
 #' @export
-get_commit_data_from_local <- function(repo_data) {
-  clone_repos(repo_data)
-  repo_list <- repolist(repo_data)
-  Map(function(x) {
-    setwd(x);
-    extract_git_log();
-    setwd("..") # figure out
+get_commit_data_from_local <- function(repo_data, also_clone = FALSE) {
+  if (also_clone) {
+    clone_repos(repo_data)
+  }
+  repo_list <- repo_data$name
+  data <- list()
+  Map(function(x, y) {
+      setwd(x);
+      data[[y]] <<- extract_git_log();
+      setwd("../");
     },
-    repo_list)
+    repo_list,
+    seq_along(repo_list))
+  data
 }
 
-# TODO: check that this works
 #' @export
 get_all_commit_data <- function(repo_data, api = TRUE) {
   if (api) {
     repo_list <- repolist(repo_data)
     data <- Map(get_commit_data_from_api, repo_list, TRUE)
-    tbl_df(rbind_all(data))
+    commits <- tbl_df(rbind_all(data))
   } else {
     data <- get_commit_data_from_local(repo_data)
-    # set names
-    tbl_df(rbind_all(data))
+    commits <- tbl_df(rbind_all(data))
+    names(commits) <- c("sha", "author", "email",
+      "date", "message", "changes")
     }
-
+  commits
 }
 
 #' @export
