@@ -164,7 +164,9 @@ get_commit_data_from_local <- function(repo_data, also_clone = FALSE) {
   data <- list()
   Map(function(x, y) {
       setwd(x);
-      data[[y]] <<- extract_git_log();
+      df <- extract_git_log();
+      df$repo_name <- x
+      data[[y]] <<- df;
       setwd("../");
     },
     repo_list,
@@ -182,7 +184,7 @@ get_all_commit_data <- function(repo_data, api = TRUE) {
     data <- get_commit_data_from_local(repo_data)
     commits <- tbl_df(rbind_all(data))
     names(commits) <- c("sha", "author", "email",
-      "date", "message", "changes")
+      "date", "message", "changes", "repo_name")
     }
   commits
 }

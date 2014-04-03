@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 url <- "https://api.github.com/orgs/rstudio/repos?page=1&per_page=20"
-auth <- "you_username:your_pw" # add your auth
+auth <- "your_username:your_pw" # add your auth
 rstudio_repo_data <- get_repo_data(url, auth)
 
 # size grouped by language
@@ -23,8 +23,8 @@ repo_language(rstudio_repo_data)
 # limit it to the top 10
 top10 <- rstudio_repo_data %.%
   arrange(desc(updated_at)) %.%
-  select(clone_url, name, updated_at)
-  %.% top_n(11) # bug in dplyr?
+  select(clone_url, name, updated_at) %.%
+  top_n(11) # bug in dplyr; fix pending
 
 # using github's REST api would make _many_ REST calls
 # so cloning is more efficient
@@ -37,7 +37,8 @@ commits <- get_all_commit_data(top10, api = FALSE)
 commits %.%
   group_by(author) %.%
   summarise(commits = n()) %.%
-  arrange(desc(commits)) %.% top_n(11)
+  arrange(desc(commits)) %.%
+  top_n(11)
 
 # Needs better name parsing still...
 # Also, many rstudio projects are not under the org's github account
@@ -56,11 +57,9 @@ commits %.%
 # 9             unknown     115
 # 10         JJ Allarie      88
 
-
 # And lastly, a look at the commit frequency over time
 over_time <- ggplot(
   commits_per_week(commits),
   aes(weekdate, commits)) +
     geom_bar(stat = "identity") +
     stat_smooth()
-
