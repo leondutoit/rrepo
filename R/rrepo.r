@@ -73,8 +73,8 @@ repolist <- function(df, exclude = "") {
   df %.%
     filter(!description %in% exclude) %.%
     select(url) %.%
-    mutate(download_url = paste(url, '/commits?page=1?per_page=100', sep = '')) %.%
-    select(download_url)
+      mutate(download_url = paste(url, '/commits?page=1?per_page=100', sep = '')) %.%
+      select(download_url)
 }
 
 #' @export
@@ -137,8 +137,6 @@ clone_repos <- function(repo_data) {
 
 #' @export
 extract_git_log <- function() {
-  # assumes already in repo dir
-  # does this for current repo
   git_log <- paste("git log --no-merges --shortstat",
     "--pretty=format:'%H;%an;%ae;%ai;%f^'",
     "| sed -e :begin -e '$!N;s/\\^\\n/\\; /; tbegin'",
@@ -163,11 +161,11 @@ get_commit_data_from_local <- function(repo_data, also_clone = FALSE) {
   repo_list <- repo_data$name
   data <- list()
   Map(function(x, y) {
-      setwd(x);
-      df <- extract_git_log();
+      setwd(x)
+      df <- extract_git_log()
       df$repo_name <- x
-      data[[y]] <<- df;
-      setwd("../");
+      data[[y]] <<- df
+      setwd("../")
     },
     repo_list,
     seq_along(repo_list))
