@@ -39,10 +39,12 @@ get_next_rel <- function(resp) {
   }
 }
 
+#' @export
 more_repos <- function(nextrel) {
   is.na(str_extract(nextrel, "page=1"))
 }
 
+#' @export
 combine_repo_data <- function(dfs) {
   tbl_df(
     rbind_all(
@@ -74,7 +76,7 @@ get_repo_data <- function(url, auth) {
 }
 
 #' @export
-repolist <- function(df, exclude = "") {
+repo_download_list <- function(df, exclude = "") {
   df %.%
     filter(!description %in% exclude) %.%
     select(url) %.%
@@ -87,7 +89,7 @@ parse_commits_api <- function(df) {
   tbl_df(
     data.frame(
       sha = df[['sha']],
-      repo = df[['url']],
+      name = df[['url']],
       email = df[['commit']][['author']][['email']],
       date = df[['commit']][['author']][['date']],
       message = df[['commit']][['message']],
@@ -127,15 +129,7 @@ get_commit_data_from_api <- function(url, write = FALSE) {
 repo_name <- function(x) {
   unlist(Map(function(x) {
       unlist(strsplit(x, "/"))[6]
-    }, x))
-}
-
-#' @export
-remove_repos <- function(df, exclude = "") {
-  df %.%
-    mutate(name = repo_name(repo)) %.%
-    select(sha, name, email, date, message) %.%
-    filter(!name %in% exclude)
+    }, x), use.names = FALSE)
 }
 
 #' @export
@@ -200,7 +194,7 @@ changes <- function(data, type) {
 }
 
 files <- function(data) {
-  changes(data, "files")
+  changes(data, "file")
 }
 
 insertions <- function(data) {
@@ -242,7 +236,7 @@ get_commit_data_from_local <- function(repo_data, also_clone = FALSE) {
 #' @export
 get_all_commit_data <- function(repo_data, api = TRUE) {
   if (api) {
-    repo_list <- repolist(repo_data)
+    repo_list <- repo_download_list(repo_data)
     data <- Map(get_commit_data_from_api, repo_list, TRUE)
     commits <- tbl_df(rbind_all(data))
   } else {
