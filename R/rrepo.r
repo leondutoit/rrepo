@@ -119,6 +119,32 @@ get_commit_data_from_api <- function(url, write = FALSE) {
 }
 
 #' @export
+repo_name <- function(x) {
+  unlist(Map(function(x) {
+      unlist(strsplit(x, "/"))[6]
+    }, x))
+}
+
+#' @export
+remove_repos <- function(df, exclude = "") {
+  df %.%
+    mutate(name = repo_name(repo)) %.%
+    select(sha, name, email, date, message) %.%
+    filter(!name %in% exclude)
+}
+
+#' @export
+combine_from_csv <- function() {
+  files <- system('ls | grep csv', intern = TRUE)
+  dfs <- list()
+  for (i in seq_along(files)) {
+    print(files[i])
+    dfs[[i]] <- read.csv(files[i], stringsAsFactors = FALSE)
+  }
+  tbl_df(rbind_all(dfs))
+}
+
+#' @export
 clone_repos <- function(repo_data) {
   info <- repo_data %.%
     select(name, clone_url) %.%
@@ -153,6 +179,42 @@ extract_git_log <- function() {
     seq_along(gcl)))
 }
 
+changes <- function(data, type) {
+  unlist(Map(function(x) {
+      changes <- unlist(strsplit(x, ","));
+      isthere <- str_detect(changes, type)
+      if (TRUE %in% isthere) {
+        change <- changes[isthere]
+        as.numeric(str_replace_all(change, "[(a-z)+-]", ""))
+      } else {
+        0
+      }
+    },
+    data),
+  use.names = FALSE)
+}
+
+files <- function(data) {
+  changes(data, "files")
+}
+
+insertions <- function(data) {
+  changes(data, "insertions")
+}
+
+deletions <- function(data) {
+  changes(data, "deletions")
+}
+
+#' @export
+parse_changes <- function(commits) {
+  commits %.%
+    mutate(
+      file_changes = files(changes),
+      insertions = insertions(changes),
+      deletions = deletions(changes))
+}
+
 #' @export
 get_commit_data_from_local <- function(repo_data, also_clone = FALSE) {
   if (also_clone) {
@@ -183,34 +245,7 @@ get_all_commit_data <- function(repo_data, api = TRUE) {
     commits <- tbl_df(rbind_all(data))
     names(commits) <- c("sha", "author", "email",
       "date", "message", "changes", "repo_name")
+    commits <- parse_changes(commits)
     }
   commits
 }
-
-#' @export
-repo_name <- function(x) {
-  unlist(Map(function(x) {
-      unlist(strsplit(x, "/"))[6]
-    }, x))
-}
-
-#' @export
-clean_github <- function(df, exclude = "") {
-  df %.%
-    mutate(name = repo_name(repo)) %.%
-    select(sha, name, email, date, message) %.%
-    filter(!name %in% exclude)
-}
-
-#' @export
-combine_from_csv <- function() {
-  files <- system('ls | grep csv', intern = TRUE)
-  dfs <- list()
-  for (i in seq_along(files)) {
-    print(files[i])
-    dfs[[i]] <- read.csv(files[i], stringsAsFactors = FALSE)
-  }
-  tbl_df(rbind_all(dfs))
-}
-
-
