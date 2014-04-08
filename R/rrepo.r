@@ -11,7 +11,6 @@
 
 #' @export
 doget <- function(url, auth) {
-  # auth "username:password"
   options(
     RCurlOptions = list(
       followlocation = TRUE,
@@ -44,9 +43,22 @@ more_repos <- function(nextrel) {
   is.na(str_extract(nextrel, "page=1"))
 }
 
+combine_repo_data <- function(dfs) {
+  tbl_df(
+    rbind_all(
+      Map(function(x) {
+        tbl_df(x) %.%
+          select(
+            name, description, created_at, updated_at,
+            pushed_at, size, language, forks_count,
+            url, ssh_url, clone_url)
+        },
+      dfs))) %.%
+    arrange(desc(updated_at))
+}
+
 #' @export
 get_repo_data <- function(url, auth) {
-  # url: "https://api.github.com/orgs/{org_name}/repos?page=1&per_page=100"
   print("fetching repo info")
   resp <- doget(url, auth)
   dfs <- list(fromJSON(resp[['data']]))
@@ -58,14 +70,7 @@ get_repo_data <- function(url, auth) {
     nextrel <- get_next_rel(resp)
     i <- i + 1
   }
-  tbl_df(rbind_all(
-    Map(function(x) {
-        tbl_df(x) %.%
-          select(name, description, created_at, updated_at,
-            pushed_at, size, language, forks_count,
-            url, ssh_url, clone_url)
-        },
-        dfs)))
+  combine_repo_data(dfs)
 }
 
 #' @export
