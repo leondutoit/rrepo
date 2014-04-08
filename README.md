@@ -27,5 +27,8 @@ author_contributions(commits)
 project_heatmap(projects_over_time(commits))
 
 ```
+There are two ways to get information about commits: 1) clone repos from github and extract info locally; or 2) use the github REST API to download commits in batches. Both methods work just fine.
+
+I recommend method #1 if there are many commits and if you're interested in deeper details - the local extraction gives information about files changed, insertions and deletions per commit, while the github API does not. Of course the information is available but getting it via HTTP would mean making crazy amounts of requests. Method #1 is also less error prone due to possible network disturbances when making lots of REST calls.
 
 For more in depth examples see the `examples` folder.
