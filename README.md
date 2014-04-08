@@ -3,13 +3,13 @@ rrepo
 
 Tools to analyse an organisation's github repos. This is made primarily for my own enjoyment although it is certainly also useful for other people who are curious about their organisation's git repos.
 
-```R
+```coffee
 install.packages("devtools")
 devtools::install_github("rrepo", "leondutoit")
 ```
 
 Quick example:
-```R
+```coffee
 library(rrepo)
 url <- "https://api.github.com/orgs/{org_name}/repos" # substitue {org_name} with name
 auth <- "{username}:{password}" # substitue with your github auth
