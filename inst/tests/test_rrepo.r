@@ -100,28 +100,27 @@ test_that("repo_name extracts name from URL", {
 context("working with commits")
 
 create_test_changes <- function() {
-  c(
-    "25 files changed, 418 insertions(+), 411 deletions(-)",
+  c("25 files changed, 418 insertions(+), 411 deletions(-)",
     "7 files changed, 72 insertions(+)",
     "1 file changed, 5 deletions(-)")
 }
 
-test_that("changes function extracts file changes", {
-    changes <- changes(create_test_changes(), "file")
+test_that("commit_changes function extracts file changes", {
+    changes <- commit_changes(create_test_changes(), "file")
     correct_changes <- c(25, 7, 1)
     expect_equal(changes, correct_changes)
   }
 )
 
-test_that("changes function extracts changes from strings", {
-    changes <- changes(create_test_changes(), "insertions")
+test_that("commit_changes function extracts insertions from strings", {
+    changes <- commit_changes(create_test_changes(), "insertions")
     correct_changes <- c(418, 72, 0)
     expect_equal(changes, correct_changes)
   }
 )
 
-test_that("changes function extracts changes from strings", {
-    changes <- changes(create_test_changes(), "deletions")
+test_that("commit_changes function extracts deletions from strings", {
+    changes <- commit_changes(create_test_changes(), "deletions")
     correct_changes <- c(411, 0, 5)
     expect_equal(changes, correct_changes)
   }

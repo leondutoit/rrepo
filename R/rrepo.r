@@ -178,7 +178,8 @@ extract_git_log <- function() {
     seq_along(gcl)))
 }
 
-changes <- function(data, type) {
+#' @export
+commit_changes <- function(data, type) {
   unlist(Map(function(x) {
       changes <- unlist(strsplit(x, ","));
       isthere <- str_detect(changes, type)
@@ -194,15 +195,15 @@ changes <- function(data, type) {
 }
 
 files <- function(data) {
-  changes(data, "file")
+  commit_changes(data, "file")
 }
 
 insertions <- function(data) {
-  changes(data, "insertions")
+  commit_changes(data, "insertions")
 }
 
 deletions <- function(data) {
-  changes(data, "deletions")
+  commit_changes(data, "deletions")
 }
 
 #' @export
