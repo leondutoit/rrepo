@@ -23,6 +23,9 @@ clone_repos(repo_data)
 commits <- get_all_commit_data(repo_data, api = FALSE) # use local repos
 author_contributions(commits)
 
+# Pretty picture
+project_heatmap(projects_over_time(commits))
+
 ```
 
 For more in depth examples see the `examples` folder.

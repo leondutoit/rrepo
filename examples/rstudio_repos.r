@@ -63,3 +63,5 @@ over_time <- ggplot(
   aes(weekdate, commits)) +
     geom_bar(stat = "identity") +
     stat_smooth()
+
+over_time_per_project <- project_heatmap(projects_over_time(commits))
