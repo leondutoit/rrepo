@@ -2,8 +2,8 @@ library(testthat)
 
 create_test_response <- function(any_left = TRUE) {
   if (any_left) {
-    header <- c(
-        "Link" = paste(
+    header <- list(
+        link = paste(
           "<https://api.github.com/organizations/513560/repos?info=IAMNEXT>;",
           "rel=\"next\", ",
           "<https://api.github.com/organizations/513560/repos?page=2&per_page=20>;",
@@ -15,7 +15,7 @@ create_test_response <- function(any_left = TRUE) {
     data = data.frame(
       x = "irrelevant",
       stringsAsFactors = FALSE),
-    header = header)
+    headers = header)
 }
 
 context("extracting the next URL for page traversal")

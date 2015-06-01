@@ -2,36 +2,22 @@
 #' github API v3
 
 #' @import dplyr
-#' @import RCurl
 #' @import lubridate
 #' @import ggplot2
 #' @import jsonlite
 #' @import stringr
-#' @import scales
+#' @import httr
 
 #' @export
-doget <- function(url, auth) {
-  options(
-    RCurlOptions = list(
-      followlocation = TRUE,
-      timeout = 100,
-      useragent = "curl/7.30.0"))
-  h <- basicHeaderGatherer()
-  resp <- getURL(
-    url,
-    userpwd = auth,
-    httpauth = 1L,
-    headerfunction = h$update)
-  list(
-    data = resp,
-    header = h$value())
+http_get <- function(url, auth) {
+  resp <- GET(url, authenticate(auth$user, auth$pw))
+  list(data = content(resp, "text"), headers = headers(resp))
 }
 
 #' @export
 get_next_rel <- function(resp) {
-  headers <- names(resp[['header']])
-  if ("Link" %in% headers) {
-    links <- resp[['header']][['Link']]
+  if ("link" %in% names(resp$headers)) {
+    links <- resp$headers$link
     link <- unlist(strsplit(links, ";"))[1]
     str_replace_all(link, "([<>])", "")
   } else {
@@ -62,12 +48,12 @@ combine_repo_data <- function(dfs) {
 #' @export
 get_repo_data <- function(url, auth) {
   print("fetching repo info")
-  resp <- doget(url, auth)
+  resp <- http_get(url, auth)
   dfs <- list(fromJSON(resp[['data']]))
   nextrel <- get_next_rel(resp)
   i <- 2
   while (more_repos(nextrel)) {
-    resp <- doget(nextrel, auth)
+    resp <- http_get(nextrel, auth)
     dfs[[i]] <- fromJSON(resp[['data']])
     nextrel <- get_next_rel(resp)
     i <- i + 1
@@ -107,13 +93,13 @@ get_commit_data_from_api <- function(url, write = FALSE) {
   print("fetching commits...")
   print(url)
   print(1)
-  resp <- doget(url)
+  resp <- http_get(url)
   commits <- list(parse_commits_api(fromJSON(resp[['data']])))
   nextrel <- get_next_rel(resp)
   i <- 2
   while (str_detect(nextrel, "last_sha")) {
     print(i)
-    resp <- doget(nextrel)
+    resp <- http_get(nextrel)
     commits[[i]] <- parse_commits_api(fromJSON(resp[['data']]))
     nextrel <- get_next_rel(resp)
     i <- i + 1

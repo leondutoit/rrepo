@@ -1,18 +1,18 @@
-rrepo
-=====
+### rrepo
 
 Tools to analyse an organisation's github repos. This is made primarily for my own enjoyment although it is certainly also useful for other people who are curious about their organisation's git repos.
 
-```coffee
+```R
 install.packages("devtools")
 devtools::install_github("rrepo", "leondutoit")
 ```
 
 Quick example:
-```coffee
+
+```R
 library(rrepo)
 url <- "https://api.github.com/orgs/{org_name}/repos" # substitue {org_name} with name
-auth <- "{username}:{password}" # substitue with your github auth
+auth <- list(user = "user", pw = "pw") # substitue with your github auth
 repo_data <- get_repo_data(url, auth)
 
 # Repo level info

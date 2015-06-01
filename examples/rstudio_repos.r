@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 url <- "https://api.github.com/orgs/rstudio/repos?page=1&per_page=20"
-auth <- "your_username:your_pw" # add your auth
+auth <- list(user = "user", pw = "pw") # add your auth
 rstudio_repo_data <- get_repo_data(url, auth)
 
 # size grouped by language
@@ -24,7 +24,7 @@ repo_language(rstudio_repo_data)
 top10 <- rstudio_repo_data %>%
   arrange(desc(updated_at)) %>%
   select(clone_url, name, updated_at) %>%
-  top_n(11) # bug in dplyr; fix pending
+  top_n(10)
 
 # using github's REST api would make _many_ REST calls
 # so cloning is more efficient
@@ -38,7 +38,7 @@ commits %>%
   group_by(author) %>%
   summarise(commits = n()) %>%
   arrange(desc(commits)) %>%
-  top_n(11)
+  top_n(10)
 
 # Needs better name parsing still...
 # Also, many rstudio projects are not under the org's github account
