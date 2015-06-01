@@ -21,9 +21,9 @@ repo_language(rstudio_repo_data)
 # 8         NA    298
 
 # limit it to the top 10
-top10 <- rstudio_repo_data %.%
-  arrange(desc(updated_at)) %.%
-  select(clone_url, name, updated_at) %.%
+top10 <- rstudio_repo_data %>%
+  arrange(desc(updated_at)) %>%
+  select(clone_url, name, updated_at) %>%
   top_n(11) # bug in dplyr; fix pending
 
 # using github's REST api would make _many_ REST calls
@@ -34,10 +34,10 @@ clone_repos(top10)
 # extract commit data from local repos
 commits <- get_all_commit_data(top10, api = FALSE)
 
-commits %.%
-  group_by(author) %.%
-  summarise(commits = n()) %.%
-  arrange(desc(commits)) %.%
+commits %>%
+  group_by(author) %>%
+  summarise(commits = n()) %>%
+  arrange(desc(commits)) %>%
   top_n(11)
 
 # Needs better name parsing still...
