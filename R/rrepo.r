@@ -49,13 +49,13 @@ combine_repo_data <- function(dfs) {
   tbl_df(
     rbind_all(
       Map(function(x) {
-        tbl_df(x) %.%
+        tbl_df(x) %>%
           select(
             name, description, created_at, updated_at,
             pushed_at, size, language, forks_count,
             url, ssh_url, clone_url)
         },
-      dfs))) %.%
+      dfs))) %>%
     arrange(desc(updated_at))
 }
 
@@ -77,10 +77,10 @@ get_repo_data <- function(url, auth) {
 
 #' @export
 repo_download_list <- function(df, exclude = "") {
-  df %.%
-    filter(!description %in% exclude) %.%
-    select(url) %.%
-      mutate(download_url = paste(url, '/commits?page=1?per_page=100', sep = '')) %.%
+  df %>%
+    filter(!description %in% exclude) %>%
+    select(url) %>%
+      mutate(download_url = paste(url, '/commits?page=1?per_page=100', sep = '')) %>%
       select(download_url)
 }
 
@@ -145,8 +145,8 @@ combine_from_csv <- function() {
 
 #' @export
 clone_repos <- function(repo_data) {
-  info <- repo_data %.%
-    select(name, clone_url) %.%
+  info <- repo_data %>%
+    select(name, clone_url) %>%
     mutate(clone_statement = paste('git clone', clone_url))
   Map(function(name, statement) {
       already_cloned <- name %in% dir()
@@ -208,7 +208,7 @@ deletions <- function(data) {
 
 #' @export
 parse_changes <- function(commits) {
-  commits %.%
+  commits %>%
     mutate(
       file_changes = files(changes),
       insertions = insertions(changes),
