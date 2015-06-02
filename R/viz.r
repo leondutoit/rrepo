@@ -1,4 +1,6 @@
 
+#' @import ggplot2
+
 #' @export
 project_heatmap <- function(df) {
   colours <- c("#a50026", "#d73027", "#f46d43", "#fdae61",

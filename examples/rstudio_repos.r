@@ -5,7 +5,7 @@ library(ggplot2)
 
 url <- "https://api.github.com/orgs/rstudio/repos?page=1&per_page=20"
 auth <- list(user = "user", pw = "pw") # add your auth
-rstudio_repo_data <- get_repo_data(url, auth)
+rstudio_repo_data <- get_org_repo_data(url, auth)
 
 # size grouped by language
 repo_language(rstudio_repo_data)
