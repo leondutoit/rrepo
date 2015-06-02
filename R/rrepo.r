@@ -52,8 +52,6 @@ get_org_repo_data <- function(url, auth) {
 
 #' @export
 clone_org_repos <- function(org_data) {
-  # TODO implement with git2r
-  # clone into tempdir and return references in a list
   path <- file.path(tempfile("rrepo-"), "repos")
   dir.create(path)
   repos <- list()
