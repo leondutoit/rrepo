@@ -68,6 +68,10 @@ remove_local_clones <- function(repos) {
   # todo impl
 }
 
+make_date <- function(x) {
+  as.Date(as.POSIXct(x, origin = "1970-01-01"))
+}
+
 #' @export
 setGeneric("commit_info", function(x) {
   stardardGeneric("commit_info")
@@ -81,7 +85,7 @@ setMethod("commit_info",
     author <- slot(x, "author")
     name <- slot(author, "name")
     email <- slot(author, "email")
-    date <- slot(slot(author, "when"), "time") # TODO cast to posixct
+    date <- make_date(slot(slot(author, "when"), "time"))
     message <- slot(x, "summary")
   data_frame(
     sha = sha,
