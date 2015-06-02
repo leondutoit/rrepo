@@ -30,7 +30,7 @@ more_repos <- function(nextrel) {
 }
 
 parse_org_repo_data <- function(repo_data) {
-  repo_data %>% select(name, created_at, updated_at, clone_url, language)
+  repo_data %>% select(name, created_at, updated_at, clone_url, language, size)
 }
 
 #' @export
