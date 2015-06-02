@@ -7,7 +7,7 @@ project_heatmap <- function(df) {
     "#fee090", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
   labels <- as.character(10 * 1:10)
   ggplot(df, aes(
-    date, repo_name, fill = as.factor(ceiling(percentage)))) +
+    date, repo, fill = as.factor(ceiling(percentage)))) +
       geom_raster() +
       scale_fill_manual(
         values = colours,
