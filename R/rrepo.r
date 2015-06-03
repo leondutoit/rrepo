@@ -64,8 +64,12 @@ clone_org_repos <- function(org_data) {
   repos
 }
 
+#' @export
 remove_local_clones <- function(repos) {
-  # todo impl
+  for (repo in repos) {
+    system(paste("rm -rf", slot(repo, "path")))
+  }
+  rm(repos)
 }
 
 make_date <- function(x) {
