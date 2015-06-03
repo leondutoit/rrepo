@@ -36,26 +36,6 @@ test_that("get_next_rel returns 'done' when nothing left to download", {
   }
 )
 
-context("getting repo data from the API")
+context("repo analysis")
 
-create_repo_dfs <- function() {
-  testdf <- function(name, updated_at) {
-    data.frame(
-      name = c(name),
-      description = c("test repo"),
-      created_at = c(as.POSIXct("2014-04-01 13:09:11")),
-      updated_at = c(as.POSIXct(updated_at)),
-      pushed_at = c(as.POSIXct("2014-03-01 13:09:11")),
-      size = c(40),
-      language = c("R"),
-      forks_count = c(4),
-      url = c("ble"),
-      ssh_url = c("more_ble"),
-      clone_url = c("even_more_ble"),
-      leave_me_out = c("thanks"),
-      stringsAsFactors = FALSE)
-  }
-  list(
-    df1 = testdf("testrepo1","2014-04-01 13:09:11"),
-    df2 = testdf("testrepo2", "2014-04-02 13:09:11"))
-}
+

@@ -8,7 +8,6 @@
 #' @import httr
 #' @import git2r
 
-#' @export
 http_get <- function(url, auth) {
   resp <- GET(url, authenticate(auth$user, auth$pw))
   list(data = content(resp, "text"), headers = headers(resp))
@@ -33,6 +32,21 @@ parse_org_repo_data <- function(repo_data) {
   repo_data %>% select(name, created_at, updated_at, clone_url, language, size)
 }
 
+#' Get repository data for the organisation from github
+#'
+#' \code{get_org_repo_data} returns a data frame with repository information
+#'
+#' This function performs one or more HTTP requests aagainst the github API v3.
+#'
+#' @param url a string url
+#' @param auth a list with two named fields list(user = "", pw = "")
+#' @return a data frame with git repo information
+#' @examples
+#' # Get data for rstudio
+#' url <- "https://api.github.com/orgs/rstudio/repos?page=1&per_page=20"
+#' auth <- list(user = "me", pw = "something")
+#' repo_information <- get_org_repo_data(url, auth)
+#'
 #' @export
 get_org_repo_data <- function(url, auth) {
   print("fetching repo info")
@@ -50,6 +64,18 @@ get_org_repo_data <- function(url, auth) {
   bind_rows(dfs)
 }
 
+#' Clone repos in repo_data
+#'
+#' \code{clone_org_repos} clones all repos in the given list and returns a list of references
+#'
+#' This function create a temporary folder to store local clones of repos
+#'
+#' @param org_data the return value of \code{get_org_repo_data}
+#' @return a list of references to cloned git repositories
+#' @examples
+#' repo_information <- get_org_repo_data(url, auth)
+#' clones <- clone_org_repos(repo_information)
+#'
 #' @export
 clone_org_repos <- function(org_data) {
   path <- file.path(tempfile("rrepo-"), "repos")
@@ -64,6 +90,17 @@ clone_org_repos <- function(org_data) {
   repos
 }
 
+#' Remove cloned repos
+#'
+#' \code{remove_local_clones(repos)} deletes git repos from temporary folder
+#'
+#' This function loops through all references to repos and deltes them on the file-sysem.
+#'
+#' @param repos the return value of clone_org_repos - a list of references
+#' @return nothing
+#' @examples
+#' remove_local_clones(repos)
+#'
 #' @export
 remove_local_clones <- function(repos) {
   for (repo in repos) {
@@ -76,12 +113,10 @@ make_date <- function(x) {
   as.Date(as.POSIXct(x, origin = "1970-01-01"))
 }
 
-#' @export
 setGeneric("commit_info", function(x) {
   stardardGeneric("commit_info")
 })
 
-#' @export
 setMethod("commit_info",
   c(x = "git_commit"),
   function(x) {
@@ -99,6 +134,17 @@ setMethod("commit_info",
     message = message)
 })
 
+#' Extract the git log for a repo
+#'
+#' \code{git_log_to_df(repo)} extracts the commit log and other useful information
+#'
+#' This function operates on a git2r repo refernce
+#'
+#' @param repo a git2r reference to a local repo
+#' @return a data frame with all commits and metadata
+#' @examples
+#' git_log_to_df(repo)
+#'
 #' @export
 git_log_to_df <- function(repo) {
   commit_log <- commits(repo)
@@ -111,6 +157,17 @@ git_log_to_df <- function(repo) {
   df
 }
 
+#' Extract and combine git log for all repos in the list of references
+#'
+#' \code{get_all_commit_data(repos)} gets all commit data :)
+#'
+#' This function combines all commit information from a list of repos into one data frame
+#'
+#' @param a list of git2r repo references
+#' @return a data frame of commits and associated information
+#' @examples
+#' get_all_commit_data(repos)
+#'
 #' @export
 get_all_commit_data <- function(repos) {
   all_commits <- list()
