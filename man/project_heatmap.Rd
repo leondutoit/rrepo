@@ -2,6 +2,7 @@
 % Please edit documentation in R/viz.r
 \name{project_heatmap}
 \alias{project_heatmap}
+\title{A heatmap of relative commit activity per repo per week}
 \usage{
 project_heatmap(commits_per_project)
 }
@@ -10,6 +11,12 @@ project_heatmap(commits_per_project)
 }
 \value{
 a ggplot object
+}
+\description{
+\code{project_heatmap(repos)}
+}
+\details{
+This creates a picture of repo activity for the organisation
 }
 \examples{
 project_heatmap(projects_over_time(commits))

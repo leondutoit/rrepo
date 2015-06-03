@@ -1,6 +1,4 @@
 
-#' @import dplyr
-
 #' Show repo language stats
 #'
 #' \code{repo_language(org_repo_data)} return a summary of main languages of all repos

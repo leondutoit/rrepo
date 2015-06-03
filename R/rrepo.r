@@ -1,5 +1,3 @@
-#' rrepo
-#' github API v3
 
 #' @import dplyr
 #' @import lubridate
@@ -7,6 +5,8 @@
 #' @import stringr
 #' @import httr
 #' @import git2r
+#' @import ggplot2
+
 
 http_get <- function(url, auth) {
   resp <- GET(url, authenticate(auth$user, auth$pw))

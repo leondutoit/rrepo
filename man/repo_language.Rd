@@ -2,6 +2,7 @@
 % Please edit documentation in R/analysis.r
 \name{repo_language}
 \alias{repo_language}
+\title{Show repo language stats}
 \usage{
 repo_language(org_repo_data)
 }
@@ -10,6 +11,12 @@ repo_language(org_repo_data)
 }
 \value{
 a data frame of summary stats
+}
+\description{
+\code{repo_language(org_repo_data)} return a summary of main languages of all repos
+}
+\details{
+This function is based on information from github and is not 100% accurate
 }
 \examples{
 repo_language(org_repo_data)

@@ -1,7 +1,4 @@
 
-#' @import ggplot2
-
-
 #' A heatmap of relative commit activity per repo per week
 #'
 #' \code{project_heatmap(repos)}
