@@ -38,4 +38,42 @@ test_that("get_next_rel returns 'done' when nothing left to download", {
 
 context("repo analysis")
 
+commit_file_to_repo <- function(repo, path, filename) {
+  writeLines("some data for the file", file.path(path, filename))
+  add(repo, filename)
+  commit(repo, "Commit message")
+}
 
+create_test_repo <- function() {
+  path <- file.path(tempfile("test-repo-"))
+  print(paste("created test repo at ", path))
+  dir.create(path)
+  repo <- init(path)
+  commit_file_to_repo(repo, path, "file1")
+  commit_file_to_repo(repo, path, "file2")
+  repository(path)
+}
+
+remove_test_repo <- function(repo) {
+  system(paste("rm -rf"), slot(repo, "path"),
+    intern = T, ignore.stdout = T, ignore.stderr = T, wait = F)
+}
+
+test_that("git_log_to_df extracts all commit data", {
+  test_repo <- create_test_repo()
+  commit_log <- git_log_to_df(test_repo)
+  expect_equal(names(commit_log), c("sha", "name", "email", "date", "message", "repo"))
+  expect_equal(length(commit_log$sha), 2)
+  remove_test_repo(test_repo)
+})
+
+test_that("get_all_commit_data does so", {
+  test_repo1 <- create_test_repo()
+  test_repo2 <- create_test_repo()
+  test_repos <- list(test_repo1, test_repo2)
+  commit_log <- get_all_commit_data(test_repos)
+  expect_equal(names(commit_log), c("sha", "name", "email", "date", "message", "repo"))
+  expect_equal(length(commit_log$sha), 4)
+  remove_test_repo(test_repo1)
+  remove_test_repo(test_repo2)
+})
