@@ -30,7 +30,7 @@ create_commits <- function() {
       "43b68ca416dfa218ac2140eb7329528f9098f097",
       "5877688c4733cb936b1d5b43d042d3586c6c6722",
       "cb097bfac5d6f00a7f833175722da8708c9f5631"),
-    author = c(
+    name = c(
       "Leon du Toit",
       "Line Simenstad",
       "Line Simenstad",
@@ -55,14 +55,11 @@ create_commits <- function() {
       "11 files changed, 551 insertions(+)",
       "5 files changed, 3 insertions(+), 485 deletions(-)",
       "5 files changed, 8194 insertions(+)"),
-    repo_name = c(
+    repo = c(
       "jabra",
       "howzitmyboy",
       "howzitmyboy",
       "howzitmyboy"),
-    file_changes = c(25, 11, 5, 5),
-    insertions = c(418, 551, 3, 8194),
-    deletions= c(411, 0, 485, 0),
     stringsAsFactors = FALSE)
 }
 
@@ -104,27 +101,10 @@ test_that("projects_over_time aggregates correctly", {
       percentage = c(10, 5, 10),
       stringsAsFactors = FALSE)
     expect_equal(dim(over_time), dim(correct_over_time))
-    expect_equal(over_time$repo_name, correct_over_time$repo_name)
+    expect_equal(over_time$repo, correct_over_time$repo)
     expect_equal(over_time$date, correct_over_time$date)
     expect_equal(over_time$commits, correct_over_time$commits)
     expect_equal(over_time$max_commits, correct_over_time$max_commits)
     expect_equal(over_time$percentage, correct_over_time$percentage)
-  }
-)
-
-test_that("author_contributions returns what it should", {
-    test_commits <- create_commits()
-    contributions <- author_contributions(test_commits)
-    correct_contributions <- data.frame(
-      author = c("Leon du Toit", "Line Simenstad"),
-      files_contrib = c(30, 16),
-      insertions_contrib = c(8612, 554),
-      deletions_contrib = c(411, 485),
-      stringsAsFactors = FALSE)
-    expect_equal(dim(contributions), dim(correct_contributions))
-    expect_equal(contributions$author, correct_contributions$author)
-    expect_equal(contributions$files_contrib, correct_contributions$files_contrib)
-    expect_equal(contributions$insertions_contrib, correct_contributions$insertions_contrib)
-    expect_equal(contributions$deletions_contrib, correct_contributions$deletions_contrib)
   }
 )
