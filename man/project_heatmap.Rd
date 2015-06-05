@@ -18,7 +18,4 @@ a ggplot object
 \details{
 This creates a picture of repo activity for the organisation
 }
-\examples{
-project_heatmap(projects_over_time(commits))
-}
 

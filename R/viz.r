@@ -7,8 +7,6 @@
 #'
 #' @param commits_per_project, aggregated per project per period - in a data frame
 #' @return a ggplot object
-#' @examples
-#' project_heatmap(projects_over_time(commits))
 #'
 #' @export
 project_heatmap <- function(commits_per_project) {
