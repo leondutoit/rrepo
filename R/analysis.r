@@ -7,8 +7,6 @@
 #'
 #' @param org_repo_data  (data frame) github data about an organisation's repo
 #' @return a data frame of summary stats
-#' @examples
-#' repo_language(org_repo_data)
 #'
 #' @export
 repo_language <- function(org_repo_data) {
@@ -25,8 +23,6 @@ repo_language <- function(org_repo_data) {
 #'
 #' @param commits (data frame) commits for one or more repos
 #' @return a data frame with aggegates about how many commits per week per repo
-#' @examples
-#' commits_per_week(commits)
 #'
 #' @export
 commits_per_week <- function(commits) {
@@ -44,8 +40,6 @@ commits_per_week <- function(commits) {
 #'
 #' @param (data frame) commits the commits of one or more repos
 #' @return a data frame with summary stats
-#' @examples
-#' projects_over_time(commits)
 #'
 #' @export
 projects_over_time <- function(commits) {
@@ -64,8 +58,6 @@ projects_over_time <- function(commits) {
 #'
 #' @param commits (data frame) the commits you want to inspect
 #' @return a data frame of stats
-#' @examples
-#' author_contributions(commits)
 #'
 #' @export
 author_contributions <- function(commits) {

@@ -41,11 +41,6 @@ parse_org_repo_data <- function(repo_data) {
 #' @param url a string url
 #' @param auth a list with two named fields list(user = "", pw = "")
 #' @return a data frame with git repo information
-#' @examples
-#' # Get data for rstudio
-#' url <- "https://api.github.com/orgs/rstudio/repos?page=1&per_page=20"
-#' auth <- list(user = "me", pw = "something")
-#' repo_information <- get_org_repo_data(url, auth)
 #'
 #' @export
 get_org_repo_data <- function(url, auth) {
@@ -72,9 +67,6 @@ get_org_repo_data <- function(url, auth) {
 #'
 #' @param org_data the return value of \code{get_org_repo_data}
 #' @return a list of references to cloned git repositories
-#' @examples
-#' repo_information <- get_org_repo_data(url, auth)
-#' clones <- clone_org_repos(repo_information)
 #'
 #' @export
 clone_org_repos <- function(org_data) {
@@ -98,8 +90,6 @@ clone_org_repos <- function(org_data) {
 #'
 #' @param repos the return value of clone_org_repos - a list of references
 #' @return nothing
-#' @examples
-#' remove_local_clones(repos)
 #'
 #' @export
 remove_local_clones <- function(repos) {
@@ -142,8 +132,6 @@ setMethod("commit_info",
 #'
 #' @param repo a git2r reference to a local repo
 #' @return a data frame with all commits and metadata
-#' @examples
-#' git_log_to_df(repo)
 #'
 #' @export
 git_log_to_df <- function(repo) {
@@ -165,8 +153,6 @@ git_log_to_df <- function(repo) {
 #'
 #' @param a list of git2r repo references
 #' @return a data frame of commits and associated information
-#' @examples
-#' get_all_commit_data(repos)
 #'
 #' @export
 get_all_commit_data <- function(repos) {
