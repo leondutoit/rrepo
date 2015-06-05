@@ -2,7 +2,9 @@ Package: rrepo
 Title: rrepo: understand your repo
 Description: tools to understand social behaviour based on repo information
 Version: 0.1
-Author: Leon du Toit
+Authors@R: c(
+    person("Leon", "du Toit", , "dutoit.leon@gmail.com", c("aut", "cre"))
+    )
 Depends:
     R (>= 3.0.2)
 Imports:
