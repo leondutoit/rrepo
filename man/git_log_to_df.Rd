@@ -18,7 +18,4 @@ a data frame with all commits and metadata
 \details{
 This function operates on a git2r repo refernce
 }
-\examples{
-git_log_to_df(repo)
-}
 

@@ -18,7 +18,4 @@ a data frame with aggegates about how many commits per week per repo
 \details{
 This function does what it says :)
 }
-\examples{
-commits_per_week(commits)
-}
 

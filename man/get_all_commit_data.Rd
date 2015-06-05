@@ -18,7 +18,4 @@ a data frame of commits and associated information
 \details{
 This function combines all commit information from a list of repos into one data frame
 }
-\examples{
-get_all_commit_data(repos)
-}
 

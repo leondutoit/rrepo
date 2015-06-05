@@ -20,10 +20,4 @@ a data frame with git repo information
 \details{
 This function performs one or more HTTP requests aagainst the github API v3.
 }
-\examples{
-# Get data for rstudio
-url <- "https://api.github.com/orgs/rstudio/repos?page=1&per_page=20"
-auth <- list(user = "me", pw = "something")
-repo_information <- get_org_repo_data(url, auth)
-}
 

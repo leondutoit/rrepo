@@ -18,8 +18,4 @@ a list of references to cloned git repositories
 \details{
 This function create a temporary folder to store local clones of repos
 }
-\examples{
-repo_information <- get_org_repo_data(url, auth)
-clones <- clone_org_repos(repo_information)
-}
 

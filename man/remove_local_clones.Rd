@@ -18,7 +18,4 @@ nothing
 \details{
 This function loops through all references to repos and deltes them on the file-sysem.
 }
-\examples{
-remove_local_clones(repos)
-}
 

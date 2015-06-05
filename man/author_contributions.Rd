@@ -18,7 +18,4 @@ a data frame of stats
 \details{
 This function shows how many commits each contributor has made
 }
-\examples{
-author_contributions(commits)
-}
 

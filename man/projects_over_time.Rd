@@ -18,7 +18,4 @@ a data frame with summary stats
 \details{
 This function shows relative activity (% of most commits per week, a bit random but yeah)
 }
-\examples{
-projects_over_time(commits)
-}
 

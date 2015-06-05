@@ -18,7 +18,4 @@ a data frame of summary stats
 \details{
 This function is based on information from github and is not 100% accurate
 }
-\examples{
-repo_language(org_repo_data)
-}
 
