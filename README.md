@@ -4,7 +4,7 @@ Tools to analyse an organisation's github repos. This is made primarily for my o
 
 ```R
 install.packages("devtools")
-devtools::install_github("rrepo", "leondutoit")
+devtools::install_github("leondutoit/rrepo")
 ```
 
 Quick example:
