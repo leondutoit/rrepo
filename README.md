@@ -1,5 +1,7 @@
 ### rrepo
 
+[![Build Status](https://travis-ci.org/leondutoit/rrepo.svg)](https://travis-ci.org/leondutoit/rrepo)
+
 Tools to analyse an organisation's github repos. This is made primarily for my own enjoyment although it is certainly also useful for other people who are curious about their organisation's git repos.
 
 ```R
